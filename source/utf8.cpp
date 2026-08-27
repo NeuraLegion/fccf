@@ -68,6 +68,8 @@ int u8_toucs(uint32_t* dest, int sz, char* src, int srcsz)
   int i = 0;
 
   while (i < sz - 1) {
+    if (srcsz != -1 && src >= src_end)
+      goto done_toucs;
     nb = trailingBytesForUTF8[(unsigned char)*src];
     if (srcsz == -1) {
       if (*src == 0)
