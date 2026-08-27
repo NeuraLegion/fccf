@@ -315,6 +315,9 @@ int u8_unescape(char* buf, int sz, char* src)
   while (*src && c < sz) {
     if (*src == '\\') {
       src++;
+      /* A trailing backslash is not an escape sequence. */
+      if (!*src)
+        break;
       amt = u8_read_escape_sequence(src, &ch);
     } else {
       ch = (uint32_t)*src;
