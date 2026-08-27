@@ -100,6 +100,9 @@ void searcher::file_search(std::string_view filename, std::string_view haystack)
   std::string_view view(it, haystack_end - it);
   if (view.empty()) {
     it = haystack_end;
+  } else if (m_query.empty()) {
+    // The SIMD searcher's non-empty needle paths assume a valid match window.
+    it = haystack_begin;
   } else {
     auto pos = sse2_strstr_v2(std::string_view(it, haystack_end - it), m_query);
     if (pos != std::string::npos) {
