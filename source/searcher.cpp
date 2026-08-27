@@ -314,14 +314,21 @@ void searcher::file_search(std::string_view filename, std::string_view haystack)
                       // printed instead of just the reference (e.g., variable
                       // name)
                       auto newline_before = haystack.rfind('\n', pos);
-                      while (haystack[newline_before + 1] == ' '
+                      while (newline_before != std::string_view::npos
+                             && newline_before + 1 < haystack.size()
+                             && (haystack[newline_before + 1] == ' '
                              || haystack[newline_before + 1] == '\t')
+                             )
                       {
                         newline_before += 1;
                       }
                       auto newline_after = haystack.find('\n', pos);
-                      pos = newline_before + 1;
-                      count = newline_after - newline_before - 1;
+                      pos = newline_before == std::string_view::npos
+                          ? 0
+                          : newline_before + 1;
+                      count = newline_after == std::string_view::npos
+                          ? haystack.size() - pos
+                          : newline_after - pos;
                     }
 
                     if (pos < haystack_size) {
