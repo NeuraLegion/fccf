@@ -68,6 +68,8 @@ int u8_toucs(uint32_t* dest, int sz, char* src, int srcsz)
   int i = 0;
 
   while (i < sz - 1) {
+    if (srcsz != -1 && src >= src_end)
+      goto done_toucs;
     nb = trailingBytesForUTF8[(unsigned char)*src];
     if (srcsz == -1) {
       if (*src == 0)
@@ -315,6 +317,9 @@ int u8_unescape(char* buf, int sz, char* src)
   while (*src && c < sz) {
     if (*src == '\\') {
       src++;
+      /* A trailing backslash is not an escape sequence. */
+      if (!*src)
+        break;
       amt = u8_read_escape_sequence(src, &ch);
     } else {
       ch = (uint32_t)*src;
