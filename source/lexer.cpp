@@ -351,7 +351,11 @@ void lexer::process_string()
 
     move_forward();
   }
-  move_forward();
+  // An unterminated string ends at the end of the input.  Do not advance
+  // past it: the resulting string_view must remain within m_input.
+  if (m_index < m_input.size()) {
+    move_forward();
+  }
 
   auto end = m_index;
   std::string_view literal(m_input.data() + start, end - start);
